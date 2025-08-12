@@ -1,16 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Meme Vault</title>
 <style>
+  :root {
+    --color-bg-dark: #121212;
+    --color-bg-light: #f5f5f5;
+    --color-text-dark: #eee;
+    --color-text-light: #222;
+    --color-primary: #3a8ee6;
+    --color-primary-dark: #1f4bbd;
+    --color-accent: #e67e22;
+    --color-fav: #ffcc00;
+  }
+
   body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background: #121212;
-    color: #eee;
     margin: 0; 
     padding: 0;
     display: flex;
     flex-direction: column;
     min-height: 100vh;
+    background: var(--color-bg-dark);
+    color: var(--color-text-dark);
+    transition: background 0.3s ease, color 0.3s ease;
   }
+  body.light {
+    background: var(--color-bg-light);
+    color: var(--color-text-light);
+  }
+
   header {
-    background: linear-gradient(90deg, #3a8ee6, #1f4bbd);
+    background: linear-gradient(90deg, var(--color-primary), var(--color-primary-dark));
     padding: 1.2rem 1rem;
     text-align: center;
     font-size: 2rem;
@@ -18,7 +41,36 @@
     letter-spacing: 3px;
     color: #fff;
     box-shadow: 0 4px 10px rgba(58, 142, 230, 0.7);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
   }
+
+  header h1 {
+    margin: 0;
+    flex-grow: 1;
+  }
+
+  #modeToggle {
+    cursor: pointer;
+    background: transparent;
+    border: 2px solid #fff;
+    border-radius: 6px;
+    padding: 0.3rem 0.8rem;
+    font-weight: 700;
+    color: #fff;
+    transition: background 0.3s ease, color 0.3s ease;
+  }
+  body.light #modeToggle {
+    border-color: var(--color-text-light);
+    color: var(--color-text-light);
+  }
+  #modeToggle:hover {
+    background: #fff;
+    color: var(--color-primary-dark);
+  }
+
   main {
     flex: 1;
     max-width: 900px;
@@ -27,7 +79,13 @@
     background: #1e1e1e;
     border-radius: 12px;
     box-shadow: 0 8px 20px rgba(0,0,0,0.7);
+    transition: background 0.3s ease;
   }
+  body.light main {
+    background: #fff;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  }
+
   form {
     background: #2a2a2a;
     padding: 1.2rem;
@@ -35,13 +93,22 @@
     margin-bottom: 1.5rem;
     box-shadow: inset 0 0 8px #444;
   }
+  body.light form {
+    background: #f0f0f0;
+    box-shadow: inset 0 0 8px #ccc;
+  }
+
   label {
     display: block;
     margin: 0.6rem 0 0.3rem;
     font-weight: 600;
     color: #ccc;
   }
-  input[type="file"], input[type="datetime-local"], button {
+  body.light label {
+    color: #555;
+  }
+
+  input[type="file"], input[type="datetime-local"], input[type="text"], button {
     width: 100%;
     padding: 0.6rem 0.9rem;
     margin-bottom: 1rem;
@@ -52,30 +119,51 @@
     color: #eee;
     transition: background 0.25s ease;
   }
-  input[type="file"]:focus, input[type="datetime-local"]:focus {
+  body.light input[type="file"],
+  body.light input[type="datetime-local"],
+  body.light input[type="text"] {
+    background: #fff;
+    color: #222;
+    border: 1px solid #ccc;
+  }
+  input[type="file"]:focus, input[type="datetime-local"]:focus, input[type="text"]:focus {
     outline: none;
     background: #444;
-    box-shadow: 0 0 8px #3a8ee6;
+    box-shadow: 0 0 8px var(--color-primary);
   }
+  body.light input[type="file"]:focus,
+  body.light input[type="datetime-local"]:focus,
+  body.light input[type="text"]:focus {
+    background: #fff;
+    box-shadow: 0 0 8px var(--color-primary);
+  }
+
   button {
-    background: #3a8ee6;
+    background: var(--color-primary);
     color: white;
     font-weight: 700;
     cursor: pointer;
     transition: background 0.3s ease, transform 0.2s ease;
   }
   button:hover {
-    background: #1f4bbd;
+    background: var(--color-primary-dark);
     transform: scale(1.05);
   }
   button:active {
     transform: scale(0.95);
   }
+
+  #searchInput {
+    margin-bottom: 1.5rem;
+    font-size: 1rem;
+  }
+
   .memes-container {
     display: grid;
     grid-template-columns: repeat(auto-fit,minmax(220px,1fr));
     gap: 1.25rem;
   }
+
   .meme-card {
     background: #292929;
     border-radius: 14px;
@@ -86,16 +174,26 @@
     flex-direction: column;
     transition: transform 0.3s ease, box-shadow 0.3s ease;
   }
+  body.light .meme-card {
+    background: #fafafa;
+    box-shadow: 0 0 15px rgba(58, 142, 230, 0.3);
+  }
+
   .meme-card:hover {
     transform: translateY(-6px);
     box-shadow: 0 10px 25px rgba(58, 142, 230, 0.9);
   }
+
   .meme-media {
     width: 100%;
     max-height: 250px;
     object-fit: contain;
     background: #000;
   }
+  body.light .meme-media {
+    background: #eee;
+  }
+
   .meme-info {
     padding: 1rem 1.2rem;
     flex-grow: 1;
@@ -104,16 +202,25 @@
     justify-content: space-between;
     color: #ddd;
   }
+  body.light .meme-info {
+    color: #333;
+  }
+
   .meme-time {
     font-size: 0.85rem;
     color: #aaa;
     margin-bottom: 0.6rem;
     font-style: italic;
   }
+  body.light .meme-time {
+    color: #666;
+  }
+
   .actions {
     display: flex;
     justify-content: flex-end;
   }
+
   .btn-fav {
     background: transparent;
     border: none;
@@ -123,14 +230,19 @@
     transition: color 0.3s ease;
     user-select: none;
   }
-  .btn-fav.favorited {
-    color: #ffcc00;
-    text-shadow: 0 0 8px #ffcc00;
+  body.light .btn-fav {
+    color: #444;
   }
+
+  .btn-fav.favorited {
+    color: var(--color-fav);
+    text-shadow: 0 0 8px var(--color-fav);
+  }
+
   .btn-random {
     margin-bottom: 1.5rem;
     width: 100%;
-    background: #e67e22;
+    background: var(--color-accent);
     font-weight: 700;
     border-radius: 10px;
     box-shadow: 0 6px 12px rgba(230, 126, 34, 0.8);
@@ -143,28 +255,264 @@
   .btn-random:active {
     transform: scale(0.96);
   }
+
+  .btn-clear {
+    background: #c0392b;
+    margin-bottom: 1.5rem;
+    width: 100%;
+    font-weight: 700;
+    border-radius: 10px;
+    box-shadow: 0 6px 12px rgba(192, 57, 43, 0.8);
+    transition: background 0.3s ease, transform 0.2s ease;
+  }
+  .btn-clear:hover {
+    background: #922b21;
+    transform: scale(1.04);
+  }
+  .btn-clear:active {
+    transform: scale(0.96);
+  }
+
   @media (max-width: 480px) {
     .memes-container {
       grid-template-columns: 1fr;
     }
+    header {
+      flex-direction: column;
+      gap: 0.7rem;
+      font-size: 1.6rem;
+    }
+    #modeToggle {
+      padding: 0.25rem 0.6rem;
+    }
   }
 </style>
-
-<header>Meme Vault</header>
+</head>
+<body>
+<header>
+  <h1>Meme Vault</h1>
+  <button id="modeToggle" aria-label="Toggle Dark/Light Mode">Light Mode</button>
+</header>
 <main>
   <form id="uploadForm">
     <label for="memeFile">Upload Image/Video</label>
     <input type="file" id="memeFile" accept="image/*,video/*" required />
-    
+
     <label for="timeTag">Time Tag (required)</label>
     <input type="datetime-local" id="timeTag" required />
-    
+
     <button type="submit">Upload Meme</button>
   </form>
 
+  <input type="text" id="searchInput" placeholder="Search memes by time tag..." aria-label="Search memes by time tag" />
+
   <button class="btn-random" id="randomBtn">Show Random Meme</button>
+  <button class="btn-clear" id="clearBtn">Clear All Memes</button>
 
   <div class="memes-container" id="memesContainer">
     <!-- Memes show up here -->
   </div>
 </main>
+
+<script>
+(() => {
+  const uploadForm = document.getElementById('uploadForm');
+  const memeFile = document.getElementById('memeFile');
+  const timeTag = document.getElementById('timeTag');
+  const memesContainer = document.getElementById('memesContainer');
+  const randomBtn = document.getElementById('randomBtn');
+  const searchInput = document.getElementById('searchInput');
+  const clearBtn = document.getElementById('clearBtn');
+  const modeToggle = document.getElementById('modeToggle');
+  const body = document.body;
+
+  // Load memes and favorites from localStorage or start empty
+  let memes = JSON.parse(localStorage.getItem('memes') || '[]');
+  let favorites = JSON.parse(localStorage.getItem('favorites') || '[]');
+  let darkMode = localStorage.getItem('darkMode') === 'true';
+
+  function saveMemes() {
+    localStorage.setItem('memes', JSON.stringify(memes));
+  }
+
+  function saveFavorites() {
+    localStorage.setItem('favorites', JSON.stringify(favorites));
+  }
+
+  function saveDarkMode() {
+    localStorage.setItem('darkMode', darkMode.toString());
+  }
+
+  function isFavorited(id) {
+    return favorites.includes(id);
+  }
+
+  function toggleFavorite(id) {
+    if (isFavorited(id)) {
+      favorites = favorites.filter(favId => favId !== id);
+    } else {
+      favorites.push(id);
+    }
+    saveFavorites();
+    renderMemes();
+  }
+
+  function createMemeCard(meme) {
+    const card = document.createElement('div');
+    card.classList.add('meme-card');
+
+    let media;
+    if (meme.type.startsWith('image/')) {
+      media = document.createElement('img');
+      media.src = meme.dataUrl;
+      media.alt = 'Meme Image';
+    } else if (meme.type.startsWith('video/')) {
+      media = document.createElement('video');
+      media.src = meme.dataUrl;
+      media.controls = true;
+      media.muted = true;
+      media.loop = true;
+      media.autoplay = true;
+    }
+    media.classList.add('meme-media');
+    card.appendChild(media);
+
+    const info = document.createElement('div');
+    info.classList.add('meme-info');
+
+    const timeElem = document.createElement('div');
+    timeElem.classList.add('meme-time');
+    const dateObj = new Date(meme.timeTag);
+    timeElem.textContent = `Time: ${dateObj.toLocaleString()}`;
+    info.appendChild(timeElem);
+
+    const actions = document.createElement('div');
+    actions.classList.add('actions');
+
+    const favBtn = document.createElement('button');
+    favBtn.classList.add('btn-fav');
+    if (isFavorited(meme.id)) {
+      favBtn.classList.add('favorited');
+      favBtn.innerHTML = '★';
+    } else {
+      favBtn.innerHTML = '☆';
+    }
+    favBtn.title = 'Favorite';
+    favBtn.setAttribute('aria-label', isFavorited(meme.id) ? 'Unfavorite meme' : 'Favorite meme');
+    favBtn.addEventListener('click', (e) => {
+      e.preventDefault();
+      toggleFavorite(meme.id);
+    });
+
+    actions.appendChild(favBtn);
+    info.appendChild(actions);
+
+    card.appendChild(info);
+
+    return card;
+  }
+
+  function renderMemes(filterText = '') {
+    memesContainer.innerHTML = '';
+    let memesToShow = memes;
+
+    if (filterText.trim()) {
+      const lower = filterText.toLowerCase();
+      memesToShow = memes.filter(m => new Date(m.timeTag).toLocaleString().toLowerCase().includes(lower));
+    }
+
+    if (memesToShow.length === 0) {
+      memesContainer.innerHTML = '<p style="color:#888; text-align:center;">No memes to show.</p>';
+      return;
+    }
+
+    memesToShow.forEach(meme => {
+      const card = createMemeCard(meme);
+      memesContainer.appendChild(card);
+    });
+  }
+
+  function generateId() {
+    return 'meme_' + Math.random().toString(36).substr(2, 9);
+  }
+
+  uploadForm.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const file = memeFile.files[0];
+    const timeValue = timeTag.value;
+
+    if (!file) {
+      alert('Please select a file to upload.');
+      return;
+    }
+    if (!timeValue) {
+      alert('Time tag is required.');
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = function(evt) {
+      const dataUrl = evt.target.result;
+      const newMeme = {
+        id: generateId(),
+        dataUrl,
+        timeTag: timeValue,
+        type: file.type
+      };
+      memes.push(newMeme);
+      saveMemes();
+      renderMemes(searchInput.value);
+      uploadForm.reset();
+    };
+    reader.readAsDataURL(file);
+  });
+
+  randomBtn.addEventListener('click', () => {
+    if (memes.length === 0) {
+      alert('No memes uploaded yet.');
+      return;
+    }
+    const randomIndex = Math.floor(Math.random() * memes.length);
+    const randomMeme = memes[randomIndex];
+    memesContainer.innerHTML = '';
+    memesContainer.appendChild(createMemeCard(randomMeme));
+  });
+
+  clearBtn.addEventListener('click', () => {
+    if (confirm('Are you sure you want to clear all memes? This cannot be undone.')) {
+      memes = [];
+      favorites = [];
+      saveMemes();
+      saveFavorites();
+      renderMemes();
+    }
+  });
+
+  searchInput.addEventListener('input', () => {
+    renderMemes(searchInput.value);
+  });
+
+  modeToggle.addEventListener('click', () => {
+    darkMode = !darkMode;
+    if (darkMode) {
+      body.classList.remove('light');
+      modeToggle.textContent = 'Light Mode';
+    } else {
+      body.classList.add('light');
+      modeToggle.textContent = 'Dark Mode';
+    }
+    saveDarkMode();
+  });
+
+  // Initialize mode based on saved preference
+  if (!darkMode) {
+    body.classList.add('light');
+    modeToggle.textContent = 'Dark Mode';
+  }
+
+  // Initial render
+  renderMemes();
+})();
+</script>
+</body>
+</html>
